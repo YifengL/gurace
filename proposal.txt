@@ -1,0 +1,7 @@
+Project: Implement additional data structures to internal libraries for grace
+
+Phase1: Design the interface of bi-directional dictionary, immutable set similar to google's Guava libraries. The interface for grace will be a little bit different from guava since in grace we inherit from collectionFactory.trait<T> and use withAll method to create an object of collections while in Java we simply create an instance of a class by new keyword.
+
+Phase2: Implement the interface designed in phase 1. Write test suits and performance benchmarks for the implementation. Also we plan to wrtie documentation in the form of a LaTeX document similar to the BasicTypes document. So that others can actually use the data structures.
+
+Phase3: More data structures. Since guava is such a strong and useful open source libraries , we might be able to bring more data structures from guava besides the data structures mentioned in phase 1. Like priority queues, multisets and more...
