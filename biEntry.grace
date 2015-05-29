@@ -26,7 +26,7 @@ factory method newEntry<K,V>(binds:Binding<K,V>) -> BiEntry<K,V>{
     }
     
     method !=(other){
-        if((self.key!=other.key) && (self.value!=other.value))then{
+        if((self.key!=other.key) || (self.value!=other.value))then{
             return true
         }
     }
