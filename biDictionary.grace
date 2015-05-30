@@ -20,16 +20,13 @@ factory method biDictionary<K,V>{
             self.empty.at(k)put(v)
     }
     method withAll(initialBindings:Collection<Binding<K,V>>)size(expectedSize:Number) -> BiDictionary<K,V>{
-        object {
-            outer.fromBindings(initialBindings,expectedSize)
-        }
+        fromBindings(initialBindings,expectedSize)
     }
     
     method withAll(initialBindings:Collection<Binding<K,V>>) -> BiDictionary<K,V> {
-        object {
-            def defaultSize = 16
-            outer.fromBindings(initialBindings,defaultSize)
-        }
+        def defaultSize = 16
+        fromBindings(initialBindings,defaultSize)
+        
     }
     method fromBindings(bindings,eSize){
         object{
@@ -40,6 +37,8 @@ factory method biDictionary<K,V>{
             def unused = object { 
                 def key is public = self
                 def value is public = self
+                method nextVToK { "unused" }
+                method nextKToV { "unused" }
                 method asString { "unused" }
             }
             for (0..(hashTableKToV.size-1)) do {i->
@@ -51,7 +50,20 @@ factory method biDictionary<K,V>{
             
             method size{ return numEntries }
             
-            factory method biEntryIterator -> Iterator<biEntry.BiEntry<K,V>>{
+            method ==(other){
+                match(other)
+                    case{o:BiDictionary->
+                        if(self.size!= o.size) then{ return false }
+                        ///// TBD
+                        return true
+                    } 
+            }
+           
+            method reversed{
+              
+            }
+            
+            factory method iterator -> Iterator<biEntry.BiEntry<K,V>>{
                 var count:=1
                 var i:=0
                 var entry:=hashTableKToV[i]
