@@ -9,8 +9,8 @@ factory method newEntry<K,V>(binds:Binding<K,V>) -> BiEntry<K,V>{
     def unused = object { 
         def k  = self
         def v  = self
-        method nextKToV { "unused"} 
-        method nextVToK { "unused"}
+        def nextKToV = self
+        def nextVToK = self
         method asString { "unused" }
     }
     
@@ -20,22 +20,17 @@ factory method newEntry<K,V>(binds:Binding<K,V>) -> BiEntry<K,V>{
     var v:=binds.value
     
     method ==(other){
-        if((self.asString=="unused") && (other.asString=="unused"))then{
-            return true
-        }elseif((self.key==other.key) && (self.value==other.value) &&(self.nextKToV==other.nextKToV) &&(self.nextVToK==other.nextVToK))then{
+        if((self.key==other.key) && (self.value==other.value))then{
             return true
         }
     }
     
     method !=(other){
-        if(self==other)then{
-            return false
-        }else{
+        if((self.key!=other.key) && (self.value!=other.value))then{
             return true
         }
     }
     
-    method asString { return "biEntry {k}::{v}" }
     method key{ k }
     method value{ v }
     method nextKToV{ nextKToVBucket }
