@@ -78,6 +78,9 @@ factory method biDictionary<K,V>{
                     if(entry!=unused)then{
                         block1.apply(entry.value)
                         entry:=entry.nextVToK
+                    }else{
+                        i:=i+1
+                        entry:=hashTableVToK[i]
                     }
                 }
             }
@@ -95,7 +98,13 @@ factory method biDictionary<K,V>{
                 }
                 
             }
-            method asString{}
+            method asString{ 
+                var str:="BiDictionary: "
+                keysAndValuesDo{k,v ->
+                    str:=str ++ "{k}::{v}, "
+                }
+                str ++ "⟭"
+            }
             
             method []:=(k, v) { 
                 at(k)put(v) 
@@ -133,15 +142,17 @@ factory method biDictionary<K,V>{
                         NoSuchObject.raise "dictionary does not contain entry with value {v}"
                     }
                 }
+                return self
             }
             
             method size{ return numEntries }
             
             method keys -> Enumerable<K> {
+                def sourceDict = self
                 object{
                     inherits enumerable.trait<K>
                     factory method iterator {
-                        def sourceIterator = self.biEntryIterator
+                        def sourceIterator = sourceDict.biEntryIterator
                         method hasNext { sourceIterator.hasNext }
                         method next { sourceIterator.next.key }
                         method asString { 
@@ -152,10 +163,11 @@ factory method biDictionary<K,V>{
             }
             
             method values -> Enumerable<V> {
+               def sourceDict = self
                 object{
                     inherits enumerable.trait<V>
                     factory method iterator {
-                        def sourceIterator = outer.biEntryIterator
+                        def sourceIterator = sourceDict.biEntryIterator
                         method hasNext { sourceIterator.hasNext }
                         method next { sourceIterator.next.value }
                         method asString { 
@@ -166,10 +178,11 @@ factory method biDictionary<K,V>{
             }
             
             method bindings -> Enumerable<Binding<K,V>>{
+                def sourceDict = self
                 object{
                     inherits enumerable.trait<V>
                     factory method iterator{
-                        def sourceIterator =outer.biEntryIterator
+                        def sourceIterator =sourceDict.biEntryIterator
                         method hasNext{ sourceIterator.hasNext }
                         method next{ sourceIterator.next.key::sourceIterator.next.value}
                         method asString{ "an iterator over bindings of {self}"}
@@ -177,9 +190,21 @@ factory method biDictionary<K,V>{
                 }
             }
             
-            method containsKey(k) { return false}
+            method containsKey(key) { 
+                def entry=seekByKey(key)
+                if(entry.key==key)then{
+                    return true
+                }else{
+                    return false
+                }
+            }
             
-            method containsValue(v) { return false}
+            method containsValue(value) { 
+                def entry=seekByValue(value)
+                if(entry.value==value)then{
+                    return false
+                }
+            }
             
             method ++(other) {}
             
@@ -254,7 +279,7 @@ factory method biDictionary<K,V>{
                 }
                 def newEntry=biEntry.newEntry(key::value)
                 insert(newEntry)
-                
+                self
             }
             
             method insert(entry) is confidential{
@@ -299,6 +324,8 @@ factory method biDictionary<K,V>{
                     prevEntry:=bucketEntry
                     bucketEntry:=bucketEntry.nextVToKBucket
                 }
+                
+                numEntries:=numEntries-1
             }
             
             method seekByKey(key:K) is confidential{
