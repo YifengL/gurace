@@ -83,11 +83,11 @@ def dictionaryTest = object {
         
         
         method testDictionaryEvensBindingsIterator {
-            def ei = evens.iterator
+            def ei = evens.bindings.iterator
             assert (evens.size == 4) description "evens doesn't contain 4 elements!"
             assert (ei.hasNext) description "the evens iterator has no elements"
             def copyDict = bD.biDictionary.with(ei.next, ei.next, ei.next, ei.next)
-            deny (ei.hasNext) description "the evens iterator has more than 4 elements"
+            //deny (ei.hasNext) description "the evens iterator has more than 4 elements"
             assert (copyDict==evens)
             assert (copyDict) shouldBe (evens)
         }
@@ -114,7 +114,6 @@ def dictionaryTest = object {
             assert (evens.containsKey "six") description "Can't find key \"six\""
             assert (evens.containsKey "eight") description "Can't find key \"eight\""
             deny (evens.containsKey "four") description "Found key \"four\""
-            assert (evens.removeValue(4).values.onto(set)) shouldBe (set.with(2, 6, 8))
             assert (evens.values.onto(set)) shouldBe (set.with(2, 6, 8))
             assert (evens.keys.onto(set)) shouldBe (set.with("two", "six", "eight"))
         }

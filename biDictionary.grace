@@ -1,15 +1,8 @@
-import "biEntry" as biEntry
 
 
   
-type BiDictionary<K,V>=Collection<V> & type{
-    size -> Number
-    containsKey(k:K) -> Boolean
-    containsValue(v:V) -> Boolean
-    at(key:K)put(value:V) -> Done
+type BiDictionary<K,V>=Dictionary<K,V> & type{
     reversed -> BiDictionary<V,K>
-    keys -> Enumerable<K>
-    values -> Enumerable<V>
 }
 
 factory method biDictionary<K,V>{
@@ -184,7 +177,10 @@ factory method biDictionary<K,V>{
                     factory method iterator{
                         def sourceIterator =sourceDict.biEntryIterator
                         method hasNext{ sourceIterator.hasNext }
-                        method next{ sourceIterator.next.key::sourceIterator.next.value}
+                        method next{ 
+                            def nextEntry=sourceIterator.next
+                            return nextEntry.key::nextEntry.value
+                        }
                         method asString{ "an iterator over bindings of {self}"}
                     }
                 }
@@ -206,7 +202,16 @@ factory method biDictionary<K,V>{
                 }
             }
             
+            method contains(v) { containsValue(v) }
+            
+            method copy{}
+            
+            method asDictionary {
+                self
+            }
             method ++(other) {}
+            
+            method --(other){}
             
             method ==(other){
                 match(other)
@@ -233,16 +238,16 @@ factory method biDictionary<K,V>{
                 outer.fromBindings(reversedBindings,eSize)
                 
             }
-            method iterator -> Iterator<V> { biEntryIterator }
+            method iterator -> Iterator<V> { values.iterator }
             
-            factory method biEntryIterator -> Iterator<biEntry.BiEntry<K,V>>{
+            factory method biEntryIterator -> Iterator<bE.BiEntry<K,V>>{
                 var count:=1
                 var i:=0
                 var entry:=hashTableKToV[i]
                 method hasNext { size >= count }
                 method next{
                     if (size < count) then {
-                        Exhausted.raise "over {outer.asString}"
+                        Exhausted.raise "over {outer.asString} size:{size} count:{count}"
                     }
                     while{entry==unused}do{
                         i:=i+1
@@ -277,7 +282,7 @@ factory method biDictionary<K,V>{
                 if(oldEntryKey!=unused)then{
                     delete(oldEntryKey)
                 }
-                def newEntry=biEntry.newEntry(key::value)
+                def newEntry=bE.newEntry(key::value)
                 insert(newEntry)
                 self
             }
