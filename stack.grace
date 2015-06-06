@@ -8,8 +8,7 @@ factory method newStack(defaultSize){
         if(top < (capacity-1))then{
             top:=top+1
             arr[top]:=elem
-            if()
-        }else{"stack overflow"}
+        }else{ expand }
     }
     
     method pop(){
@@ -18,5 +17,15 @@ factory method newStack(defaultSize){
             return arr[top+1]
         }else{"stack underflow"}
         
+    }
+    
+    method expand is confidential{
+        def n=capacity*2
+        def old = arr
+        arr :=_prelude.PrimitiveArray.new(n)
+        capacity:=n
+        for(0..(old.size-1))do{i->
+            arr[i]:= old[i]
+        }
     }
 }
