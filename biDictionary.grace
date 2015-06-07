@@ -331,11 +331,11 @@ factory method biDictionary<K,V>{
             }
             
             method insert(entry) is confidential{
-                def keyBucket = entry.key.hash % hashTableKToV.size
+                def keyBucket = mod(entry.key.hash, hashTableKToV.size)
                 entry.nextKToVBucket:=hashTableKToV[keyBucket]
                 hashTableKToV[keyBucket]:=entry
                 
-                def valueBucket =entry.value.hash % hashTableVToK.size
+                def valueBucket = mod(entry.value.hash, hashTableVToK.size)
                 entry.nextVToKBucket:=hashTableVToK[valueBucket]
                 hashTableVToK[valueBucket]:=entry
                 
@@ -343,7 +343,7 @@ factory method biDictionary<K,V>{
             }
             
             method delete(entry) is confidential{
-                def keyBucket=entry.key.hash % hashTableKToV.size
+                def keyBucket= mod(entry.key.hash, hashTableKToV.size)
                 var bucketEntry:=hashTableKToV[keyBucket]
                 var prevEntry:=unused
                 while{bucketEntry!=unused}do{
@@ -358,7 +358,7 @@ factory method biDictionary<K,V>{
                     bucketEntry:=bucketEntry.nextKToVBucket
                 }
                 
-                def valueBucket=entry.value.hash % hashTableVToK.size
+                def valueBucket= mod(entry.value.hash, hashTableVToK.size)
                 prevEntry:=unused
                 bucketEntry:=hashTableVToK[valueBucket]
                 while{bucketEntry!=unused}do{
@@ -377,7 +377,7 @@ factory method biDictionary<K,V>{
             }
             
             method seekByKey(key:K) is confidential{
-                def h=key.hash % hashTableKToV.size
+                def h= mod(key.hash, hashTableKToV.size)
                 var entry:= hashTableKToV[h]
                 while{entry!=unused}do{
                     if(entry.key==key)then{
@@ -389,7 +389,7 @@ factory method biDictionary<K,V>{
             }
             
             method seekByValue(value:V) is confidential{
-                def h=value.hash % hashTableVToK.size
+                def h= mod(value.hash, hashTableVToK.size)
                 var entry:= hashTableVToK.at(h)
                 while{entry!=unused}do{
                     if(entry.value==value)then{
@@ -400,6 +400,11 @@ factory method biDictionary<K,V>{
                 return entry
             }
             
+            method mod(n:Number, m:Number) {
+                var r := n % m
+                if (r < 0) then { r := r + m }
+                r
+            }
             
         }
     }
