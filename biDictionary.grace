@@ -99,6 +99,23 @@ factory method biDictionary<K,V>{
                 str ++ "⟭"
             }
             
+            method expandToNewSize(newSize) is confidential{
+                def oldBindings= set.empty
+                keysAndValuesDo{k,v ->
+                    oldBindings.add(k::v)     
+                }
+                hashTableKToV := _prelude.PrimitiveArray.new(newSize)
+                hashTableVToK := _prelude.PrimitiveArray.new(newSize)
+                
+                for (0..(hashTableKToV.size-1)) do {i->
+                    hashTableKToV.at(i)put(unused)
+                    hashTableVToK.at(i)put(unused)
+                }
+                for (oldBindings) do { i -> at(i.key)put(i.value) }
+               
+                    
+            }
+            
             method []:=(k, v) { 
                 at(k)put(v) 
                 done
@@ -204,14 +221,39 @@ factory method biDictionary<K,V>{
             
             method contains(v) { containsValue(v) }
             
-            method copy{}
+            method copy{
+                def newCopy=biDictionary.empty
+                self.keysAndValuesDo{k,v->
+                    newCopy.at(k)put(v)
+                }
+                newCopy
+            }
             
             method asDictionary {
-                self
+                def dict=dictionary.empty
+                keysAndValuesDo{ k, v -> 
+                    dict.at(k)put(v)
+                }
+                return dict
             }
-            method ++(other) {}
             
-            method --(other){}
+            method ++(other) {
+                def newDict = self.copy
+                other.keysAndValuesDo {k, v -> 
+                    newDict.at(k) put(v)
+                }
+                return newDict
+            }
+            
+            method --(other) {
+              def newDict = biDictionary.empty
+              keysAndValuesDo{ k, v -> 
+                  if (!other.containsKey(k)) then {
+                      newDict.at(k)put(v)
+                  }
+              }
+                return newDict
+            }
             
             method ==(other){
                 match(other)
@@ -267,6 +309,7 @@ factory method biDictionary<K,V>{
                 }
                 NoSuchObject.raise "dictionary does not contain entry with key {key}"
             }
+            
             
             method at(key:K)put(value:V){
                 def oldEntryKey=seekByKey(key)
