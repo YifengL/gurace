@@ -1,4 +1,4 @@
-
+import "biEntry" as bE
 
   
 type BiDictionary<K,V>=Dictionary<K,V> & type{
@@ -263,7 +263,7 @@ factory method biDictionary<K,V>{
             method at(key) { 
                 def entry= seekByKey(key)
                 if (entry.key == key) then {
-                    return key.value
+                    return entry.value
                 }
                 NoSuchObject.raise "dictionary does not contain entry with key {key}"
             }
