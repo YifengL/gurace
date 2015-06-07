@@ -5,7 +5,6 @@ type BiEntry<K,V> = Object & type{
     value -> V
 }
 
-
 def unused = object {
   inherits Singleton.new
   method key {}
@@ -26,7 +25,9 @@ factory method newEntry<K,V>(binds:Binding<K,V>) -> BiEntry<K,V>{
     method ==(other){
         if((self.asString=="unused") && (other.asString=="unused"))then{
             return true
-        }elseif((self.key==other.key) && (self.value==other.value) &&(self.nextKToV==other.nextKToV) &&(self.nextVToK==other.nextVToK))then{
+        } elseif ((self.asString == "unused") || (other.asString == "unused")) then {
+            return false
+        } elseif((self.key==other.key) && (self.value==other.value) &&(self.nextKToV==other.nextKToV) &&(self.nextVToK==other.nextVToK))then{
             return true
         }
         return false
