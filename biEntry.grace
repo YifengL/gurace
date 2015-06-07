@@ -5,14 +5,18 @@ type BiEntry<K,V> = Object & type{
     value -> V
 }
 
+
+def unused = object {
+  inherits Singleton.new
+  method key {}
+  method value {}
+  method nextKToV {}
+  method nextVToK {}
+  method asString { "unused" }
+}
+
+
 factory method newEntry<K,V>(binds:Binding<K,V>) -> BiEntry<K,V>{
-    def unused = object { 
-        def k  = self
-        def v  = self
-        method nextKToV { self } 
-        method nextVToK { self }
-        method asString { "unused" }
-    }
     
     var nextKToVBucket is public:=unused
     var nextVToKBucket is public:=unused
@@ -25,14 +29,11 @@ factory method newEntry<K,V>(binds:Binding<K,V>) -> BiEntry<K,V>{
         }elseif((self.key==other.key) && (self.value==other.value) &&(self.nextKToV==other.nextKToV) &&(self.nextVToK==other.nextVToK))then{
             return true
         }
+        return false
     }
     
     method !=(other){
-        if(self==other)then{
-            return false
-        }else{
-            return true
-        }
+        !(self == other)
     }
     
     method asString { return "biEntry {k}::{v}" }
