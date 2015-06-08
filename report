@@ -1,0 +1,41 @@
+Stack: A simple Stack implemetation using PrimitiveArray. Implemented methods are *size*, *push*, *pop*. The purpose of this object is to implement tree iterator.
+
+Simple Binary Search Tree (BST): This is a very simple implementation of balanced binary search tree which is supposed to be immutable. Since it is immutable, there is no need to re-balance after initialization. Elements in this tree must be comparable so that binary search is possible. The purpose of this tree is to implement an immutable set.
+
+Immutable Set: An immutable implementation of the Set interface. For modification methods such as add, addAll, remove, removeAll, extend, etc, an error "UnsupportedOperation" will be raised. In addition, because it it immutable, it has one more method, *hash*. The iterator in actually an inorder traversal of the underlying BST, so the output is sorted.
+
+AVL Tree: Used to implement treeSet.
+
+Tree Set: An implement of the Set interface using an AVL tree.
+
+biEntry:
+
+biDictionary:
+
+
+
+Challenges:
+1. Loop limit in web IDE. We tried to run our code from terminal, but failed to intall grace in our computers. Tried "sudo make" "sudo make js" "sudo make install".
+
+
+
+Problems in grace that caused unexpected result in our development:
+1. Boolean evaluation. In most languages, evaluation of boolean operators (&& ||) are short-circuit evaluation. But grace is not. For example, expression like (a || b || c) is evaluated from right to left, and all three clauses are evaluated before the result is returnded. This trouble was found in lines 35-45 in immutableSet.grace.
+2. Hash of a negative integer is the negative of the absolute value, i.e. (-n).hash == -(n.hash). Modulo operation % applied to negative integers results in negative anwser, i.e. (-10) % 3 == -1. So there will be an error if we use (x.hash % table_size) to find the index in a hash table. This trouble was found when I was trying to add negative key in a dictionary. To overcome this, we used a customized mod function.
+3. List has no methods asList, asSet. To construct a list from collection, we have to use list.withAll(coll) because coll.asList doesn't work.
+4. This is not a real trouble, but it concerns me that "2".hash == 5.hash. For immutable objects, it would be safer that hash is consistant with "==" operator.
+5. immutableSet.withAll(200..400) has float hash rather than integer.
+
+
+
+Good Results:
+1. The main use case for an immutable set is to check if it contains some element and the performance is not bad. It took 4.148 seconds for perform 3000*2*3 checks and 21 seconds for 16000*2*3 checks. On the other hand, the built in set library cannot finish that job because it misjudged on some elements. 
+
+
+Nana's contribution:
+1. Implemented immutableSet
+2. Wrote benchmarks
+3. Fixed several bugs
+4. Modified setTests from minigrace so that it works for immutableSet and treeSet.
+5. Wrote biEntry tests
+
