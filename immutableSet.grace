@@ -1,29 +1,62 @@
 import "stack" as stack 
-import "immutableSetTrait" as ist
+//import "immutableSetTrait" as immutableSetTrait
 
-def P = 1000000007
-def PP = ((P*P)+1)
+def UnsupportedOperation = Error.refine "UnsupportedOperation" 
+
+class immutable.trait<T>{
+    inherits collections.collection.trait<T>  
+    method add(t:T) { 
+      UnsupportedOperation.raise "immutable object does not support method: add"
+    }
+    method addAll(c:Collection<T>) { 
+      UnsupportedOperation.raise "immutable object does not support method: addAll"
+    }
+    method remove(*t:T) { 
+      UnsupportedOperation.raise "immutable object does not support method: remove"
+    }
+    method removeAll(c:Collection<T>) {
+      UnsupportedOperation.raise "immutable object does not support method: removeAll"
+    }
+    method removeAll(c:Collection<T>) ifAbsent(action: Block0<Done>) {
+      UnsupportedOperation.raise "immutable object does not support method: removeAllifAbsent"
+    }
+    method remove(*elements: T) ifAbsent(block: Block0<Done>)  {
+      UnsupportedOperation.raise "immutable object does not support method: removeifAbsent"
+    }
+    method extend(l) {
+      UnsupportedOperation.raise "immutable object does not support method: extend"
+    }
+}
+
+def P = 10000007
+def PP = 21789629170213
 
 def noNode = object {
   inherits Singleton.new
   method asString { "Null node" }
 }
 
-type ImmutableSet<T>=Collection<T> & type{
-    size -> Number
+
+factory method treeNode<T> {
+  method newNode(t:T) {
+    object {
+      var value is public := t
+      var left is public := noNode
+      var right is public := noNode
+      method asString { "TreeNode {value}"}
+    }
+  }
 }
 
-
+method mean(a, b) {
+  var s := (a + b)
+  if ((s%2) > 0) then { s := (s + 1)}
+  (s / 2)
+}
 
 factory method simpleBST<T> {
   method withAll(existing:Collection<T>) {
     object {
-      method mean(a, b) {
-          var s := (a + b)
-          if ((s%2) > 0) then { s := (s + 1)}
-          (s / 2)
-      }
-    
       var elements := list.withAll(existing).sort
       
       var _size := 1
@@ -46,16 +79,6 @@ factory method simpleBST<T> {
       
       method hash { hashCode }
       
-      method newNode(t:T) {
-        object {
-          var value is public := t
-          var left is public := noNode
-          var right is public := noNode
-
-          method asString { "TreeNode with value {value}" }
-        }
-      }
-      
       var root is readable := buildTree(elements, 1, _size)
 
       method size { _size }
@@ -63,7 +86,7 @@ factory method simpleBST<T> {
       method buildTree(_elems, i, j) is confidential {
         if (i > j) then { return noNode }
         var mid := mean(i, j)
-        var currNode := self.newNode(_elems[mid])
+        var currNode := treeNode.newNode(_elems[mid])
         currNode.left := buildTree(_elems, i, mid-1)
         currNode.right := buildTree(_elems, mid+1, j)
         return currNode
@@ -73,12 +96,23 @@ factory method simpleBST<T> {
   }
 }
 
+type ImmutableSet<T> = Set<T> & type {
+  hash -> Number
+} 
 
 factory method immutableSet<T> {
-  inherits collectionFactory.trait<T>
-  method withAll(existing:Collection<T>) {
+  inherits collections.collectionFactory.trait<T>
+  
+  method withCollections(*existings:Collection<T>) {
+    var existing := list.empty
+    for (existings) do { e->
+      existing.addAll(e)
+    }
+    withAll(existing)
+  }
+  method withAll(existing:Collection<T>) -> ImmutableSet<T>{
     object {
-      inherits ist.immutableSet.trait<T>
+      inherits immutable.trait<T>
       
       var bst := simpleBST.withAll(existing)
 
@@ -96,20 +130,26 @@ factory method immutableSet<T> {
         return false
       }
 
+      method includes(boolBlock) {
+        self.do { each ->
+          if (boolBlock.apply(each)) then { return true }
+        }
+        return false
+      }
 
+      method find(boolBlock)ifNone(notFoundBlock) {
+        self.do { each ->
+          if (boolBlock.apply(each)) then { return each }
+        }
+        notFoundBlock.apply
+      }
 
       method asString {
-        "set\{" ++ stringify(bst.root) ++ "\}"
-      }
-      
-      method stringify(node) is confidential {
-        if (node == noNode) then { return "" }
-        var ls := stringify(node.left)
-        var rs := stringify(node.right)
-        var s := node.value.asString
-        if (ls != "") then { s := ls ++ ", " ++ s}
-        if (rs != "") then { s := s ++ ", " ++ rs}
-        s
+        var s := "set\{"
+        self.do { each -> 
+          s := s ++ each.asString
+        } separatedBy { s := s ++ ", "}
+        s ++ "\}"
       }
 
       method hash {
@@ -121,7 +161,7 @@ factory method immutableSet<T> {
       }
       
       method ++(other) {
-        outer.with(self, other)
+        outer.withCollections(self, other)
       }
       
       method --(other) {
@@ -144,6 +184,16 @@ factory method immutableSet<T> {
         outer.withAll(_l)
       }
       
+      method ==(other) {
+        match(other)
+          case {o:ImmutableSet<T> ->
+            if (self.size != o.size ) then { return false }
+            if (self.hash != o.hash ) then { return false }
+            return ((self--o).size == 0) && ((o--self).size == 0)
+          }
+          case {_ -> return false}
+      }
+      
       method onto(f:CollectionFactory<T>) -> Collection<T> {
         f.withAll(self)
       }
@@ -152,18 +202,10 @@ factory method immutableSet<T> {
         self.do { each -> e.add(each) } 
         existing
       }
-
-      method asList {
-        var _l := list.empty
-        self.do { each ->
-          _l.add(each)
-        }
-        _l
-      }
-
+      
       method isEmpty { self.size == 0 }
 
-      method do(block1) is confidential {
+      method do(block1) {
         self.process(bst.root, block1)
       }
 
@@ -192,6 +234,9 @@ factory method immutableSet<T> {
             return (S.size > 0)
           }
           method next {
+            if (S.size == 0) then {
+              Exhausted.raise "iterator over {outer.asString}"
+            }
             var n := S.pop
             p := n.right
             while {p != noNode} do {

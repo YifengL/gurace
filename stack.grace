@@ -5,10 +5,9 @@ factory method newStack(defaultSize){
     
     method size{ top+1 }
     method push(elem){
-        if(top < (capacity-1))then{
-            top:=top+1
-            arr[top]:=elem
-        }else{ expand }
+        if (top >= (capacity - 1)) then { expand }
+        top:=top+1
+        arr[top]:=elem
     }
     
     method pop(){

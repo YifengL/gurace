@@ -89,7 +89,9 @@ def setTest = object {
             assert (set_1 ++ set_2 ++ set_3) shouldBe (iSet.withAll(1..30))
         }
         
-    
+        method testEmptyIterator {
+            deny (empty.iterator.hasNext) description "the empty iterator has an element"
+        }
         method testEvensIterator {
             def ei = evens.iterator
             assert (evens.size == 4) description "evens doesn't contain 4 elements!"
