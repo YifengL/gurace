@@ -6,11 +6,11 @@ Immutable Set: An immutable implementation of the Set interface. For modificatio
 
 AVL Tree: Used to implement treeSet.
 
-Tree Set: An implement of the Set interface using an AVL tree.
+Tree Set: An implementation of the Set interface using an AVL tree.
 
-biEntry:
+BiEntry: Used to implement BiDictionary
 
-biDictionary:
+BiDictionary: An implementation of a bi-directional dictionary using two hash tables. The two hash tables share the same data stored in the form of object instances of BiEntry. The dictionary contains a reversed method which returns the reversed view of ifself.
 
 
 
@@ -25,7 +25,7 @@ Problems in grace that caused unexpected result in our development:
 3. List has no methods asList, asSet. To construct a list from collection, we have to use list.withAll(coll) because coll.asList doesn't work.
 4. This is not a real trouble, but it concerns me that "2".hash == 5.hash. For immutable objects, it would be safer that hash is consistant with "==" operator.
 5. immutableSet.withAll(200..400) has float hash rather than integer.
-
+6. Since grace is pure OO language, we can not pass the object reference as arguments. This makes some recursion method complex. 
 
 
 Good Results:
@@ -39,3 +39,9 @@ Nana's contribution:
 4. Modified setTests from minigrace so that it works for immutableSet and treeSet.
 5. Wrote biEntry tests
 
+Yifeng's contribution:
+1.Designed the interface for BiDictionary, TreeSet, ImmutableSet
+2.Implemented BiDictionary, TreeSet, Stack.
+3.Wrote some test cases for the data structures we have designed.
+4.Drew the class diagram.
+5.Wrote documentation for data structures.
