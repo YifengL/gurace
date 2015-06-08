@@ -15,6 +15,8 @@ factory method treeNode<T> {
       var value is public := t
       var left is public := noNode
       var right is public := noNode
+
+      method asString { "TreeNode with value {value}" }
     }
   }
 }
