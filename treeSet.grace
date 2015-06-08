@@ -23,6 +23,7 @@ factory method treeSet<T>{
                         numElements:=numElements+1
                     }
                 }
+                return self
             }
             
             method contains(elem){ tree.contains(tree.root,elem)}
@@ -31,9 +32,17 @@ factory method treeSet<T>{
             
             method removeAll(elements) {
                 for (elements) do { x ->
-                    tree.remove(x)
-                    numElements:=numElements-1
+                    if(tree.remove(x))then{
+                        numElements:=numElements-1
+                    }else{
+                        NoSuchObject.raise "set does not contain {x}"
+                    }
                 }
+                return self
+            }
+            
+            method extend(l) {
+                self.addAll(l)
             }
             
             method find(booleanBlock)ifNone(notFoundBlock) {
@@ -42,6 +51,10 @@ factory method treeSet<T>{
                 }
                 return notFoundBlock.apply
             }
+            method remove()ifAbsent(){
+            
+            }
+            
             method removeAll(elements)ifAbsent(block) {
                 for (elements) do { x ->
                     def isExist=tree.remove(x)
@@ -65,11 +78,12 @@ factory method treeSet<T>{
                 preOrderDo(tree.root,block1)
             }
             
+           
             method preOrderDo(node,block){
                 if(node!=avl.unused)then{
                     block.apply(node.elem)
-                    preOrderDo(node.left)
-                    preOrderDo(node.right)
+                    preOrderDo(node.left,block)
+                    preOrderDo(node.right,block)
                 }
             }
             
@@ -78,10 +92,9 @@ factory method treeSet<T>{
                 object{
                     var count:=1
                     var node:=tree.root
-                    var s:=stack.newStack(2)
+                    var s:=stack.newStack(8)
                     while{node!=avl.unused}do{
                         s.push(node)
-                        print "push {node.elem}"
                         node:=node.left
                     }
                     method hasNext{size >= count}
@@ -98,7 +111,7 @@ factory method treeSet<T>{
                             }
                         }
                         count:=count+1
-                        return nextNode
+                        return nextNode.elem
                     }
                 }
             }
@@ -113,15 +126,37 @@ factory method treeSet<T>{
                 treeSet.withAll( self.filter {each -> other.contains(each)} )
             }
             
+            method asString{
+                var s := "treeset\{"
+                self.do {each -> s := s ++ each.asString } 
+                    separatedBy { s := s ++ ", " }
+                s ++ "\}"
+            }
             
             method -- (other) {
                 def result = treeSet.empty
-                for (self) do {v->
+                self.do {v->
                     if (!other.contains(v)) then {
                         result.add(v)
                     }
                 }
                 result
+            }
+            
+            method == (other){
+                match(other)
+                    case {o:TreeSet ->
+                        if(o.size!=self.size)then{ return false}
+                        o.do { each ->
+                            if (! self.contains(each)) then {
+                                return false
+                            }
+                        }
+                        return true
+                    } 
+                    case {_ ->
+                        return false
+                    }
             }
             
             method onto(f: CollectionFactory<T>) -> Collection<T> {
