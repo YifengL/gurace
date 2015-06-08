@@ -1,4 +1,5 @@
 import "stack" as stack 
+import "immutableSetTrait" as ist
 
 def P = 1000000007
 def PP = ((P*P)+1)
@@ -8,28 +9,21 @@ def noNode = object {
   method asString { "Null node" }
 }
 
-
-factory method treeNode<T> {
-  method newNode(t:T) {
-    object {
-      var value is public := t
-      var left is public := noNode
-      var right is public := noNode
-
-      method asString { "TreeNode with value {value}" }
-    }
-  }
+type ImmutableSet<T>=Collection<T> & type{
+    size -> Number
 }
 
-method mean(a, b) {
-  var s := (a + b)
-  if ((s%2) > 0) then { s := (s + 1)}
-  (s / 2)
-}
+
 
 factory method simpleBST<T> {
   method withAll(existing:Collection<T>) {
     object {
+      method mean(a, b) {
+          var s := (a + b)
+          if ((s%2) > 0) then { s := (s + 1)}
+          (s / 2)
+      }
+    
       var elements := list.withAll(existing).sort
       
       var _size := 1
@@ -52,6 +46,16 @@ factory method simpleBST<T> {
       
       method hash { hashCode }
       
+      method newNode(t:T) {
+        object {
+          var value is public := t
+          var left is public := noNode
+          var right is public := noNode
+
+          method asString { "TreeNode with value {value}" }
+        }
+      }
+      
       var root is readable := buildTree(elements, 1, _size)
 
       method size { _size }
@@ -59,7 +63,7 @@ factory method simpleBST<T> {
       method buildTree(_elems, i, j) is confidential {
         if (i > j) then { return noNode }
         var mid := mean(i, j)
-        var currNode := treeNode.newNode(_elems[mid])
+        var currNode := self.newNode(_elems[mid])
         currNode.left := buildTree(_elems, i, mid-1)
         currNode.right := buildTree(_elems, mid+1, j)
         return currNode
@@ -71,16 +75,10 @@ factory method simpleBST<T> {
 
 
 factory method immutableSet<T> {
-  method with(*existings:Collection<T>) {
-    var existing := list.empty
-    for (existings) do { e->
-      existing.addAll(e)
-    }
-    withAll(existing)
-  }
+  inherits collectionFactory.trait<T>
   method withAll(existing:Collection<T>) {
     object {
-      inherits collection.trait<T>
+      inherits ist.immutableSet.trait<T>
       
       var bst := simpleBST.withAll(existing)
 
@@ -98,19 +96,7 @@ factory method immutableSet<T> {
         return false
       }
 
-      method includes(boolBlock) {
-        self.do { each ->
-          if (boolBlock.apply(each)) then { return true }
-        }
-        return false
-      }
 
-      method find(boolBlock)ifNone(notFoundBlock) {
-        self.do { each ->
-          if (boolBlock.apply(each)) then { return each }
-        }
-        notFoundBlock.apply
-      }
 
       method asString {
         "set\{" ++ stringify(bst.root) ++ "\}"
@@ -177,7 +163,7 @@ factory method immutableSet<T> {
 
       method isEmpty { self.size == 0 }
 
-      method do(block1) {
+      method do(block1) is confidential {
         self.process(bst.root, block1)
       }
 
