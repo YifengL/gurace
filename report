@@ -1,6 +1,6 @@
 Diagram: There is a class diagram in the repository describes the design of our project.
 
-We have implemented th following data structures:
+We have implemented the following data structures:
 Stack: A simple Stack implemetation using PrimitiveArray. Implemented methods are *size*, *push*, *pop*. The purpose of implementing this object is to implement tree iterator.
 
 Simple Binary Search Tree (BST): This is a very simple implementation of balanced binary search tree which is supposed to be immutable. Since it is immutable, there is no need to re-balance after initialization. Elements in this tree must be comparable so that binary search is possible. The purpose of this tree is to implement an immutable set.
