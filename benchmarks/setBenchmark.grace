@@ -5,7 +5,7 @@ def iSet = imSet.immutableSet
 
 var set_1 := iSet.withAll(1..400)
 var set_2 := iSet.withAll(200..600)
-var set_3 := iSet.withAll(1..3000)
+var set_3 := iSet.withAll(1..16000)
 
 
 method printHash {
@@ -19,14 +19,15 @@ method printHash {
 
 
 method checkContains(times:Number, _set) {
+  var sz := _set.size
   for (1..times) do { t ->
     _set.do { each ->
       if (!_set.contains(each)) then { 
         print "Error at {each}"
         return
       }
-      if (_set.contains(-each)) then {
-        print "Error at {-each}"
+      if (_set.contains(each + sz)) then {
+        print "Error at {each + sz}"
         return
       }
     }
@@ -34,4 +35,4 @@ method checkContains(times:Number, _set) {
   print "finished"
 }
 
-checkContains(1, set_3)
+checkContains(3, set_3)
