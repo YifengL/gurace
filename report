@@ -20,7 +20,7 @@ Challenges:
 
 
 Problems in grace that caused unexpected result in our development:
-1. Boolean evaluation. In most languages, evaluation of boolean operators (&& ||) are short-circuit evaluation. But grace is not. For example, expression like (a || b || c) is evaluated from right to left, and all three clauses are evaluated before the result is returnded. This trouble was found in lines 35-45 in immutableSet.grace.
+1. Boolean evaluation. In most languages, evaluation of boolean operators (&& ||) are short-circuit evaluation. But grace is not. For example, expression like (a || b || c) is evaluated from right to left, and all three clauses are evaluated before the result is returnded. This trouble was found in lines 62-72 in immutableSet.grace.
 2. Hash of a negative integer is the negative of the absolute value, i.e. (-n).hash == -(n.hash). Modulo operation % applied to negative integers results in negative anwser, i.e. (-10) % 3 == -1. So there will be an error if we use (x.hash % table_size) to find the index in a hash table. This trouble was found when I was trying to add negative key in a dictionary. To overcome this, we used a customized mod function.
 3. List has no methods asList, asSet. To construct a list from collection, we have to use list.withAll(coll) because coll.asList doesn't work.
 4. This is not a real trouble, but it concerns me that "2".hash == 5.hash. For immutable objects, it would be safer that hash is consistant with "==" operator.
