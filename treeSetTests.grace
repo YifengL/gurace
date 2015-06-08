@@ -70,11 +70,7 @@ def setTest = object {
 
         method testSetAdd {
             assert (empty.add(9)) shouldBe (iSet.with(9))
-<<<<<<< HEAD
             //assert (evens.add(10)) shouldBe (iSet.with(2, 4, 6, 8, 10))
-=======
-            assert (evens.add(10)) shouldBe (iSet.with(2, 4, 6, 8, 10))
->>>>>>> origin/master
         }
         
         method testSetRemove2 {
@@ -110,12 +106,8 @@ def setTest = object {
         }
          
         method testSetExtend {
-<<<<<<< HEAD
           def extended=evens.extend(oneToFive)
           assert (evens.extend(oneToFive)) shouldBe (iSet.with(1,2,3,4,5,6,8))
-=======
-          assert {evens.extend(oneToFive)} shouldBe (iSet.with(1,2,3,4,5,6,8))
->>>>>>> origin/master
         }
 
         method testSetChaining {        
@@ -151,14 +143,6 @@ def setTest = object {
                 description "{s} should be \"8, 6\" or \"6, 8\""
         }
         
-<<<<<<< HEAD
-=======
-        method testHash {
-          var s1 := iSet.with(1, 2, 3, 4)
-          var s2 := iSet.with(4, 2, 1, 3)
-          assert (s1.hash == s2.hash)
-        }
->>>>>>> origin/master
         
         method testSetDoSeparatedByEmpty {
             var s := "nothing"
@@ -175,21 +159,12 @@ def setTest = object {
         }
          
         method testSetAsStringNonEmpty {
-<<<<<<< HEAD
             assert ((evens.asString == "treeset\{2, 4, 6, 8\}"))
                 description "treeset\{2, 4, 6, 8\}.asString is {evens.asString}"
         }
              
         method testSetAsStringEmpty {
             assert (empty.asString) shouldBe ("treeset\{\}")
-=======
-            assert ((evens.asString == "set\{2, 4, 6, 8\}"))
-                description "set\{2, 4, 6, 8\}.asString is {evens.asString}"
-        }
-             
-        method testSetAsStringEmpty {
-            assert (empty.asString) shouldBe ("set\{\}")
->>>>>>> origin/master
         }
         
         method testSetMapEmpty {
@@ -222,8 +197,4 @@ def setTest = object {
 } 
 
 def tests = gU.testSuite.fromTestMethodsIn(setTest)
-<<<<<<< HEAD
 tests.runAndPrintResults
-=======
-tests.runAndPrintResults
->>>>>>> origin/master
