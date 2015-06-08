@@ -52,42 +52,39 @@ factory method biDictionary<K,V>{
             
             method keysDo(block1){
                 var i:=0
-                var entry:=hashTableKToV[i]
+                var entry
                 while{i < hashTableKToV.size}do{
-                    if(entry!=unused)then{
+                    entry := hashTableKToV[i]
+                    while {entry != unused} do {
                         block1.apply(entry.key)
                         entry:=entry.nextKToV
-                    }else{
-                        i:=i+1
-                        entry:=hashTableKToV[i]
                     }
+                    i:=i+1
                 }
             }
             
             method valuesDo(block1){
                 var i:=0
-                var entry:=hashTableVToK[i]
+                var entry
                 while{i < hashTableVToK.size}do{
-                    if(entry!=unused)then{
+                    entry := hashTableVToK[i]
+                    while {entry != unused} do {
                         block1.apply(entry.value)
                         entry:=entry.nextVToK
-                    }else{
-                        i:=i+1
-                        entry:=hashTableVToK[i]
                     }
+                    i:=i+1
                 }
             }
             method keysAndValuesDo(block2) {
                 var i:=0
-                var entry:=hashTableKToV[i]
-                while{i < hashTableKToV.size}do{
-                    if(entry!=unused)then{
+                var entry
+                while {i < hashTableKToV.size} do{
+                    entry := hashTableKToV[i]
+                    while {entry != unused} do {
                         block2.apply(entry.key,entry.value)
                         entry:=entry.nextKToV
-                    }else{
-                        i:=i+1
-                        entry:=hashTableKToV[i]
                     }
+                    i:=i+1
                 }
                 
             }
