@@ -307,8 +307,39 @@ factory method biDictionary<K,V>{
                 NoSuchObject.raise "dictionary does not contain entry with key {key}"
             }
             
+            method atValue(value){
+                def entry=seekByValue(value)
+                if(entry.value == value) then{
+                    return entry.key
+                }
+                  NoSuchObject.raise "dictionary does not contain entry with value {value}"
+            }
             
-            method at(key:K)put(value:V){
+            method putReversed(value,key,isForce)
+            {
+                def oldEntryValue=seekByKey(value)
+                if((oldEntryValue!=unused) && (oldEntryValue.key==key))then{
+                    return value  
+                }
+                
+                def oldEntryKey=seekByKey(key)
+                if(oldEntryKey!=unused)then{
+                  //  "key already present"
+                    if(isForce)then{
+                        delete(oldEntryKey)
+                    }else{
+                        return 
+                    }
+                  
+                }
+                if(oldEntryValue!=unused)then{
+                    delete(oldEntryValue)
+                }
+                def newEntry=bE.newEntry(key::value)
+                insert(newEntry)
+                self
+            }
+            method put(key,value,isForce){
                 def oldEntryKey=seekByKey(key)
                 if((oldEntryKey!=unused) && (oldEntryKey.value==value))then{
                     return value  
@@ -317,7 +348,12 @@ factory method biDictionary<K,V>{
                 def oldEntryValue=seekByValue(value)
                 if(oldEntryValue!=unused)then{
                   //  "value already present"
-                    delete(oldEntryValue)
+                    if(isForce)then{
+                        delete(oldEntryValue)
+                    }else{
+                        return 
+                    }
+                  
                 }
                 if(oldEntryKey!=unused)then{
                     delete(oldEntryKey)
@@ -326,7 +362,20 @@ factory method biDictionary<K,V>{
                 insert(newEntry)
                 self
             }
+            method at(key:K)forcePut(value:V){
+                put(key,value,true)
+            }
             
+            method at(key:K)put(value:V){
+                put(key,value,false)
+            }
+            
+            method at(value:V)putReversed(key:K){
+                putReversed(value,key,false)
+            }
+            method at(value:V)forcePutReversed(key:K){
+                putReversed(value,key,true)
+            }
             method insert(entry) is confidential{
                 def keyBucket = mod(entry.key.hash, hashTableKToV.size)
                 entry.nextKToVBucket:=hashTableKToV[keyBucket]
