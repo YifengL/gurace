@@ -3,6 +3,9 @@ import "biEntry" as bE
   
 type BiDictionary<K,V>=Dictionary<K,V> & type{
     reversed -> BiDictionary<V,K>
+    at(key:K)forcePut(value:V) -> BiDictionary<V,K>
+    at(value:V)putReversed(key:K)-> BiDictionary<V,K>
+    at(value:V)forcePutReversed(key:K) -> BiDictionary<V,K>
 }
 
 factory method biDictionary<K,V>{
