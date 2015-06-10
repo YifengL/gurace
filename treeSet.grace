@@ -88,30 +88,26 @@ factory method treeSet<T>{
             }
             
           
-            method iterator{
+            method iterator -> Iterator<T>{
                 object{
                     var count:=1
                     var node:=tree.root
                     var s:=stack.newStack(8)
-                    while{node!=avl.unused}do{
-                        s.push(node)
-                        node:=node.left
-                    }
+                    var cur:=tree.root
+                    
                     method hasNext{size >= count}
                     method next{
-                        if(!hasNext)then{Exhausted.raise "iterator over {outer.asString}"}
-                        def nextNode=s.pop
                         
-                        var temp:=nextNode
-                        if(temp.right!= avl.unused)then{
-                            temp:=temp.right
-                            while{temp!=avl.unused}do{
-                                s.push(temp)
-                                temp:=temp.left
-                            }
+                        if(!hasNext)then{Exhausted.raise "iterator over {outer.asString}"}
+                        while{cur!=avl.unused}do{
+                            s.push(cur)
+                            cur:=cur.left
                         }
+                        cur:=s.pop
+                        var temp:=cur
+                        cur:=cur.right
                         count:=count+1
-                        return nextNode.elem
+                        return temp.elem
                     }
                 }
             }
