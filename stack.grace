@@ -1,5 +1,6 @@
-factory method newStack(defaultSize){
+factory method newStack(defaultSize:Number){
     var capacity:=defaultSize
+    if (capacity < 1) then { capacity := 1}
     var arr := _prelude.PrimitiveArray.new(capacity)   
     var top := -1
     
