@@ -25,12 +25,17 @@ factory method newEntry<K,V>(binds:Binding<K,V>) -> BiEntry<K,V>{
     method ==(other){
         if((self.asString=="unused") && (other.asString=="unused"))then{
             return true
-        } elseif ((self.asString == "unused") || (other.asString == "unused")) then {
-            return false
-        } elseif((self.key==other.key) && (self.value==other.value) &&(self.nextKToV==other.nextKToV) &&(self.nextVToK==other.nextVToK))then{
-            return true
         }
-        return false
+
+        if ((self.asString == "unused") || (other.asString == "unused")) then { return false }
+
+        if((self.key != other.key) || (self.value != other.value)) then { return false }
+            
+        if (self.nextKToV != other.nextKToV) then { return false }
+            
+        if (self.nextVToK != other.nextVToK) then { return false }
+
+        return true
     }
     
     method !=(other){
