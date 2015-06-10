@@ -43,12 +43,15 @@ def setTest = object {
             deny(empty == iSet.with(1))
             assert(empty != iSet.with(1))
             deny(empty == 3)
+            deny(empty == set.empty)
             deny(empty == evens)
         }
         
         method testSetInequalityFive {
             deny(oneToFive == iSet.with(1, 2, 3, 4, 6))
             assert(oneToFive != iSet.with(1, 2, 3, 4, 6))
+            deny(oneToFive == set.with(1, 2, 3, 4, 5))
+            assert(oneToFive != set.with(1, 2, 3, 4, 5))
         }
 
         method testSetEqualityFive {
@@ -69,12 +72,25 @@ def setTest = object {
             assert {empty.add(9)} shouldRaise (imSet.UnsupportedOperation)
         }
         
+        method testSetAddAll {
+            assert {empty.addAll(evens)} shouldRaise (imSet.UnsupportedOperation)
+        }
+
+        
         method testSetRemove {
             assert {evens.remove(2)} shouldRaise (imSet.UnsupportedOperation)
         }
-        
+
+        method testSetRemoveIfAbsent {
+            assert {evens.remove(oneToFive)ifAbsent { failBecause "modification method execution"}} shouldRaise (imSet.UnsupportedOperation)
+        }
+
         method testSetRemoveAll {
           assert {iSet.withAll(1..10).removeAll(evens)} shouldRaise (imSet.UnsupportedOperation)
+        }
+        
+        method testSetRemoveAllIfAbsent {
+            assert {evens.removeAll(oneToFive)ifAbsent{ failBecause "modification method execution"}} shouldRaise (imSet.UnsupportedOperation)
         }
         
         method testSetExtend {
@@ -141,6 +157,14 @@ def setTest = object {
              
         method testSetAsStringEmpty {
             assert (empty.asString) shouldBe ("set\{\}")
+        }
+        
+        method testSetMapEmptyIm {
+            assert (empty.map{x -> x * x}.onto(iSet)) shouldBe (iSet.empty)
+        }
+        
+        method testSetMapEvensIm {
+            assert(evens.map{x -> x + 1}.onto(iSet)) shouldBe (iSet.with(3, 5, 7, 9))
         }
         
         method testSetMapEmpty {
